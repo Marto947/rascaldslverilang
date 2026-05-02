@@ -27,7 +27,7 @@ data Space
 ;
 
 data Operator
-    = operator(str operatorName, Domain domain, list[Domain] rangeList)
+    = operator(str operatorName, Domain domain, list[Domain] range)
 ;
 
 data Domain
@@ -46,7 +46,7 @@ data Attribute
 ;
 
 data Variables
-    = Variables(list[VarDecl] variableList)
+    = variables(list[VarDecl] variableList)
 ;
 
 data VarDecl
@@ -54,7 +54,7 @@ data VarDecl
 ;
 
 data Rule
-    = rule(Invocation firstInv, Invocation secondInv)
+    = rule(Invocation opApl1, Invocation opApl2)
 ;
 
 data Invocation
@@ -75,12 +75,14 @@ data FollowExp
     | attributes(AttributeList attributes)
 ;
 
-data OrExp
-    = orExp(list[AndExp] andTerms)
+data OrExp 
+    = orExp(OrExp left, AndExp right) 
+    | andTerm(AndExp andExp)
 ;
 
-data AndExp
-    = andExp(list[NotExp] notTerms)
+data AndExp 
+    = andExp(AndExp left, NotExp right) 
+    | notTerm(NotExp notExp)
 ;
 
 data NotExp
@@ -101,8 +103,8 @@ data Primary
 ;
 
 data Number
-    = intNumber(int val)
-    | floatNumber(num val);
+    = intNumber(int valInt)
+    | floatNumber(num valFloat);
 
 data RelOp
     = eq()

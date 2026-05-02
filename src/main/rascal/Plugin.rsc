@@ -10,7 +10,7 @@ import Relation;
 import Syntax;
 
 PathConfig pcfg = getProjectPathConfig(|project://rascaldslverilang|);
-Language tdslLang = language(pcfg, "TDSL", "tdsl", "Plugin", "contribs");
+Language tdslLang = language(pcfg, "VL", "vl", "Plugin", "contribs");
 
 set[LanguageService] contribs() = {
     parser(start[MainModule] (str program, loc src) {

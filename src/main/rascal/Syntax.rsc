@@ -1,35 +1,35 @@
 module Syntax
 
-layout Layout = [\ \t]*;
+layout Layout = [\ \t\n\r]*;
 
 start syntax MainModule
-    = mainModule: NL* 'defmodule' ID moduleName 
-    NL*
-    FileImport* fileImport
+    = mainModule: 'defmodule' ID moduleName 
+    FileImport* fileImports
     Body body
     'end'
 ;
 
 syntax FileImport
-    = fileImport: 'using' ID importName NL+
+    = fileImport: 'using' ID importName
 ;
 
 // Falta añadir Equation y Relation que no se agregan al no tener reglas de producción definidas
 syntax Body
-    = body: (Statement NL*)* statements
+    = body: Statement* statements
 ;
 
 syntax Statement
-    = statement: Space space
-    | Operator operator
-    | Variables variables
-    | Rule rule
-    | Expression expression
-    | AttributeList attributeList
+    = defspace: Space space
+    | defoperator: Operator operator
+    | defvariable: Variables variables
+    | defrule: Rule rule
+    | defexpression: Expression expression
+    | defattribute: AttributeList attributeList
 ;
 
 syntax Space
-    = space: 'defspace' ID spaceName ('\<' ID)? subspaceRelation 'end'
+    = space: 'defspace' ID spaceName 'end'
+    | subspace: 'defspace' ID subSpace '\<' ID superSpace 'end'
 ;
 
 syntax Operator
@@ -37,7 +37,10 @@ syntax Operator
 ;
 
 syntax Domain
-    = domain: 'bool' | 'int' | 'real' | ID domainName
+    = boolDomain: 'bool' 
+    | intDomain: 'int' 
+    | realDomain: 'real' 
+    | nameDomain: ID domainName
 ;
 
 syntax AttributeList
@@ -45,11 +48,16 @@ syntax AttributeList
 ;
 
 syntax Attribute
-    = attribute: ID operatorName (':' Domain)? attributeDomain
+    = withDomain: ID operatorName ':' Domain domain
+    | noDomain: ID operatorName
 ;
 
 syntax Variables
-    = variables: 'defvar' (ID ':' Domain)+ variableList 'end'
+    = variables: 'defvar' VarDecl+ variableList 'end'
+;
+
+syntax VarDecl
+    = varDecl: ID varName ':' Domain domain
 ;
 
 syntax Rule
@@ -66,45 +74,59 @@ syntax Expression
 ;
 
 syntax TopExp
-    = exp: '(' Quantifier quantifier ID obj1 'in' ID obj2 (('.' TopExp) | AttributeList ) follow ')'
-    | OrExp orExp
+    = quantExp: '(' Quantifier quantifier ID obj1 'in' ID obj2 FollowExp follow ')'
+    | orExpRec: OrExp orExp
+;
+
+syntax FollowExp
+    = nextExp: '.' TopExp topExp
+    | attributes: AttributeList attrs
 ;
 
 syntax OrExp
-    = orExp: OrExp orExp 'or' AndExp andExp | AndExp andExp
+    = orExp: OrExp left 'or' AndExp right 
+    | andTerm: AndExp andExp
 ;
 
 syntax AndExp
-    = andExp: AndExp andExp 'and' NotExp notExp | NotExp notExp
+    = andExp: AndExp left 'and' NotExp right 
+    | notTerm: NotExp notExp
 ;
 
 syntax NotExp
-    = notExp: 'not' RelExp
-    | RelExp
+    = negated: 'not' RelExp exp
+    | plain: RelExp exp
 ;
 
 syntax RelExp
-    = relExp: Primary obj1 RelOp relOp Primary obj2 
+    = withRelOp: Primary obj1 RelOp relOp Primary obj2 
     | customInfix: Primary obj1 ID customOp Primary obj2
-    | Primary primary
+    | onlyPrimary: Primary primary
 ;
 
 syntax Primary
-    = primary: ID
-    | Number
-    | '(' OrExp ')'
+    = primaryStr: ID id
+    | primaryNum: Number number
+    | grouped: '(' OrExp orExp ')'
 ;
 
 syntax Number
-    = number: INT | FLOAT
+    = intNumber: INT valInt
+    | floatNumber: FLOAT valFloat
 ;
 
 syntax RelOp
-    = relOp: '=' | '\>=' | '\<=' | '≡' | '\<\>' 
+    = eq: '=' 
+    | ge: '\>=' 
+    | le: '\<=' 
+    | equiv: '≡' 
+    | iff: '\<\>' 
 ;
 
 syntax Quantifier
-    = quantifier: 'forall' | 'exists' | 'defer'
+    = forall: 'forall' 
+    | exists: 'exists' 
+    | defer: 'defer'
 ;
 
 //No utilizado todvía pero pertenece al lenguaje
@@ -112,7 +134,6 @@ syntax ArithOp
     = '+' | '-' | '*' | '/' | '**' | '%' 
 ;
 
-lexical NL = "\n" | "\r\n";
 lexical INT = ([\-0-9][0-9]* !>> [0-9]); 
 lexical FLOAT = [0-9]+ "." [0-9]+;
 lexical ID = ([a-zA-Z][a-zA-Z0-9_/.\-]* !>> [a-zA-Z0-9_/.\-]) \ Reserved;

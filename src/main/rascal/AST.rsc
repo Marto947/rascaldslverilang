@@ -34,6 +34,8 @@ data Domain
     = boolDomain()
     | intDomain()
     | realDomain()
+    | stringDomain()
+    | charDomain()
     | nameDomain(str domainName);
 
 data AttributeList
@@ -97,8 +99,11 @@ data RelExp
 ;
 
 data Primary
-    = primaryStr(str id)
+    = primaryId(str id)
     | primaryNum(Number number)
+    | primaryBool(BoolLiteral boolVal)
+    | primaryString(str strVal)
+    | primaryChar(str charVal)
     | grouped(OrExp orExp)
 ;
 
@@ -118,5 +123,10 @@ data Quantifier
     = forall()
     | exists()
     | defer()
+;
+
+data BoolLiteral
+    = trueLiteral()
+    | falseLiteral()
 ;
 

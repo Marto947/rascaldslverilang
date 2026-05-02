@@ -9,13 +9,13 @@ import IO;
 import ParseTree;
 
 void main() {
-    Tree cst = parseMainModule(|project://rascaldslverilang/instance/spec1.vl|);
+    Tree cst = parseMainModule(|project://rascaldslverilang/instance/spec3.vl|);
     str result = generator(cst);
 
     println(result);
 
     writeFile(
-        |project://rascaldslverilang/instance/output/testGenerator.vl|,
+        |project://rascaldslverilang/instance/output/testGenerator2.vl|,
         result
     );
 }
@@ -60,6 +60,8 @@ str generate(operator(str opName, Domain domain, list[Domain] range)) {
 str generate(boolDomain()) = "bool";
 str generate(intDomain()) = "int";
 str generate(realDomain()) = "real";
+str generate(stringDomain()) = "string";
+str generate(charDomain()) = "char";
 str generate(nameDomain(str name)) = name;
 
 //Attributes
@@ -102,9 +104,12 @@ str generate(customInfix(Primary p1, str op, Primary p2)) = "<generate(p1)> <op>
 str generate(onlyPrimary(Primary p)) = generate(p);
 
 //Primary
-str generate(primaryStr(str id)) = id;
+str generate(primaryId(str id)) = id;
 str generate(primaryNum(Number n)) = generate(n);
-str generate(grouped(OrExp e)) = "(<generate(e)>)";
+str generate(primaryBool(BoolLiteral b)) = generate(b);
+str generate(primaryString(str val)) = val;
+str generate(primaryChar(str c)) = c;
+str generate(grouped(OrExp e)) = "(<generate(e)>)"; 
 
 //Number
 str generate(intNumber(int valInt)) = "<valInt>";
@@ -121,3 +126,7 @@ str generate(iff()) = "\<\>";
 str generate(forall()) = "forall";
 str generate(exists()) = "exists";
 str generate(defer()) = "defer";
+
+//BoolLiteral
+str generate(trueLiteral()) = "true";
+str generate(falseLiteral()) = "false";

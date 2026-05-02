@@ -1,6 +1,6 @@
 module Syntax
 
-layout Layout = [\ \t\n\r]*;
+layout Layout = [\ \t\n\r]* !>> [\ \t\n\r];
 
 start syntax MainModule
     = mainModule: 'defmodule' ID moduleName 
@@ -37,9 +37,11 @@ syntax Operator
 ;
 
 syntax Domain
-    = boolDomain: 'bool' 
-    | intDomain: 'int' 
-    | realDomain: 'real' 
+    = boolDomain: 'bool'
+    | intDomain: 'int'
+    | realDomain: 'real'
+    | stringDomain: 'string'
+    | charDomain: 'char'
     | nameDomain: ID domainName
 ;
 
@@ -105,8 +107,11 @@ syntax RelExp
 ;
 
 syntax Primary
-    = primaryStr: ID id
+    = primaryId: ID id
     | primaryNum: Number number
+    | primaryBool: BoolLiteral boolVal
+    | primaryString: STRING strVal
+    | primaryChar: CHAR charVal
     | grouped: '(' OrExp orExp ')'
 ;
 
@@ -134,9 +139,16 @@ syntax ArithOp
     = '+' | '-' | '*' | '/' | '**' | '%' 
 ;
 
+syntax BoolLiteral
+    = trueLiteral: 'true'
+    | falseLiteral: 'false'
+;
+
+lexical STRING = "\"" ![\"\n]* "\"";
+lexical CHAR = "\'" [^\'\n] "\'";
 lexical INT = ([\-0-9][0-9]* !>> [0-9]); 
 lexical FLOAT = [0-9]+ "." [0-9]+;
 lexical ID = ([a-zA-Z][a-zA-Z0-9_/.\-]* !>> [a-zA-Z0-9_/.\-]) \ Reserved;
 keyword Reserved = "forall" | "exists" | "defer" | "not" | "and" | "or" | "in" 
 | "defrule" | "defexpression" | "defvar" | "defoperator" | "defspace" | "defmodule" | "using"
-| "bool" | "int" | "real" | "end" ;
+| "bool" | "int" | "real" | "end"| "true"| "false" | "string" | "char" ;

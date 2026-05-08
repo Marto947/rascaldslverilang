@@ -9,7 +9,7 @@ import IO;
 import ParseTree;
 
 void main() {
-    Tree cst = parseMainModule(|project://rascaldslverilang/instance/spec3.vl|);
+    Tree cst = parseMainModule(|project://rascaldslverilang/instance/spec2.vl|);
     str result = generator(cst);
 
     println(result);
@@ -62,7 +62,6 @@ str generate(intDomain()) = "int";
 str generate(realDomain()) = "real";
 str generate(stringDomain()) = "string";
 str generate(charDomain()) = "char";
-str generate(nameDomain(str name)) = name;
 
 //Attributes
 str generate(attributeList(list[Attribute] attributes)) = "[<intercalate(" ", [generate(x) | x <- attributes])>]";

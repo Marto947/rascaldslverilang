@@ -42,7 +42,6 @@ syntax Domain
     | realDomain: 'real'
     | stringDomain: 'string'
     | charDomain: 'char'
-    | nameDomain: ID domainName
 ;
 
 syntax AttributeList

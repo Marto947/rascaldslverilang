@@ -2,9 +2,11 @@ defmodule MiModulo
 using LibA 
 using LibB 
 defvar x : int end
-defspace enteros < reales end
+defvar y : real end
+defspace Enteros < Reales end
+defspace Set end
 defoperator suma : int -> int -> int end
-defoperator resta: float -> float end
+defoperator resta: real -> real end
 defrule (suma x y) -> (suma y x) end
 [conmutative:bool asociative:int]
 

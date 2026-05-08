@@ -1,11 +1,9 @@
 defmodule Test
+
 defspace Set end
 defspace Integer < Reals end
-
 defvar x:int y:bool s:char end
-
-defoperator suma: char -> bool end
-
+defoperator suma : char -> bool end
 defexpression x = y end
 defexpression x end
 defexpression (defer x in Set . x and y) end

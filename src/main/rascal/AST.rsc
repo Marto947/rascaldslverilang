@@ -36,7 +36,7 @@ data Domain
     | realDomain()
     | stringDomain()
     | charDomain()
-    | nameDomain(str domainName);
+;
 
 data AttributeList
     = attributeList(list[Attribute] attributes)
